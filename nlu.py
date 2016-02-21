@@ -19,7 +19,7 @@ import aiohttp
 from aiohttp import websocket
 import pyaudio
 import speex
-
+import random
 
 from flask import Flask, request
 
@@ -56,7 +56,7 @@ def getTripAdvisorRec(cuisine):
     print (requestURL)
 
     request = urllib.request.Request(requestURL)
-
+    n = random.randint(0,2)
     try:
         response = urllib.request.urlopen(request)
         tripAdvisor_data = response.read()
@@ -65,9 +65,15 @@ def getTripAdvisorRec(cuisine):
         #pprint.pprint(d)
         address = d["data"][0]['address_obj']['address_string']
         name = d["data"][0]['name']
-
-        output = "You should try " +  name + ".  It's located at " + address + "."
-        print (output)
+        if (n==0):
+            output = "You should try " +  name + ".  It's located at " + address + "."
+            print (output)
+        elif (n==1):
+            output = "There's a great place called  " +  name +  " at " + address + "."
+            print (output)
+        else:
+            output = "Go to " +  address +  ". It's called " + name + " and I think you'll love it! :)"
+            print (output)
 
         data = {"text": output, "role": "appMaker"}
         
