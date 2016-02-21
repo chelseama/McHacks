@@ -1,0 +1,285 @@
+Metadata-Version: 1.1
+Name: aiohttp
+Version: 0.16.2
+Summary: http client/server for asyncio
+Home-page: https://github.com/KeepSafe/aiohttp/
+Author: Nikolay Kim
+Author-email: fafhrd91@gmail.com
+License: Apache 2
+Description: http client/server for asyncio
+        ==============================
+        
+        .. image:: https://raw.github.com/KeepSafe/aiohttp/master/docs/_static/aiohttp-icon-128x128.png
+          :height: 64px
+          :width: 64px
+          :alt: aiohttp logo
+        
+        .. image:: https://secure.travis-ci.org/KeepSafe/aiohttp.png
+          :target:  https://secure.travis-ci.org/KeepSafe/aiohttp
+          :align: right
+        
+        Features
+        --------
+        
+        - Supports both client and server side of HTTP protocol.
+        - Supports both client and server Web-Sockets out-of-the-box.
+        - Web-server has middlewares and pluggable routing.
+        
+        
+        Requirements
+        ------------
+        
+        - Python >= 3.3
+        - asyncio https://pypi.python.org/pypi/asyncio
+        
+        
+        License
+        -------
+        
+        ``aiohttp`` is offered under the Apache 2 license.
+        
+        
+        Documentation
+        -------------
+        
+        http://aiohttp.readthedocs.org/
+        
+        Source code
+        ------------
+        
+        The latest developer version is available in a github repository:
+        https://github.com/KeepSafe/aiohttp
+        
+        
+        Getting started
+        ---------------
+        
+        Client
+        ^^^^^^
+        
+        To retrieve something from the web:
+        
+        .. code-block:: python
+        
+          import aiohttp
+          import asyncio
+        
+          def get_body(url):
+              response = yield from aiohttp.request('GET', url)
+              return (yield from response.read())
+        
+          if __name__ == '__main__':
+              loop = asyncio.get_event_loop()
+              raw_html = loop.run_until_complete(get_body('http://python.org'))
+              print(raw_html)
+        
+        
+        You can use the get command like this anywhere in your ``asyncio``
+        powered program:
+        
+        .. code-block:: python
+        
+          response = yield from aiohttp.request('GET', 'http://python.org')
+          body = yield from response.read()
+          print(body)
+        
+        If you want to use timeouts for aiohttp client side please use standard
+        asyncio approach:
+        
+        .. code-block:: python
+        
+           yield from asyncio.wait_for(request('GET', url), 10)
+        
+        
+        Server
+        ^^^^^^
+        
+        In aiohttp 0.12 we've added highlevel API for web HTTP server.
+        
+        This is simple usage example:
+        
+        .. code-block:: python
+        
+            import asyncio
+            from aiohttp import web
+        
+        
+            @asyncio.coroutine
+            def handle(request):
+                name = request.match_info.get('name', "Anonymous")
+                text = "Hello, " + name
+                return web.Response(body=text.encode('utf-8'))
+        
+        
+            @asyncio.coroutine
+            def wshandler(request):
+                ws = web.WebSocketResponse()
+                ws.start(request)
+        
+                while True:
+                    msg = yield from ws.receive()
+        
+                    if msg.tp == web.MsgType.text:
+                        ws.send_str("Hello, {}".format(msg.data))
+                    elif msg.tp == web.MsgType.binary:
+                        ws.send_bytes(msg.data)
+                    elif msg.tp == web.MsgType.close:
+                        break
+        
+                return ws
+        
+        
+            @asyncio.coroutine
+            def init(loop):
+                app = web.Application(loop=loop)
+                app.router.add_route('GET', '/echo', wshandler)
+                app.router.add_route('GET', '/{name}', handle)
+        
+                srv = yield from loop.create_server(app.make_handler(), '127.0.0.1', 8080)
+                print("Server started at http://127.0.0.1:8080")
+                return srv
+        
+            loop = asyncio.get_event_loop()
+            loop.run_until_complete(init(loop))
+            loop.run_forever()
+        
+        CHANGES
+        =======
+        
+        0.16.2 (05-27-2015)
+        -------------------
+        
+        - Update python version required for `__del__` usage: it's actially
+           3.4.1 instead of 3.4.0
+        
+        - Add check for presence of loop.is_closed() method before call the
+          former #378
+        
+        
+        0.16.1 (05-27-2015)
+        -------------------
+        
+        - Fix regression in static file handling #377
+        
+        0.16.0 (05-26-2015)
+        -------------------
+        
+        - Unset waiter future after cancellation #363
+        
+        - Update request url with query parameters #372
+        
+        - Support new `fingerprint` param of TCPConnector to enable verifying
+          ssl certificates via md5, sha1, or sha256 digest #366
+        
+        - Setup uploaded filename if field value is binary and transfer
+          encoding is not specified #349
+        
+        - Implement `ClientSession.close()` method
+        
+        - Implement `connector.closed` readonly property
+        
+        - Implement `ClientSession.closed` readonly property
+        
+        - Implement `ClientSession.connector` readonly property
+        
+        - Implement `ClientSession.detach` method
+        
+        - Add `__del__` to client-side objects: sessions, connectors,
+          connections, requests, responses.
+        
+        - Refactor connections cleanup by connector #357
+        
+        - Add `limit` parameter to connector constructor #358
+        
+        - Add `request.has_body` property #364
+        
+        - Add `response_class` parameter to `ws_connect()` #367
+        
+        - `ProxyConnector` doesn't support keep-alive requests by default
+          starting from now #368
+        
+        - Add `connector.force_close` property
+        
+        - Add ws_connect to ClientSession #374
+        
+        - Support optional `chunk_size` parameter in `router.add_static()`
+        
+        
+        0.15.3 (04-22-2015)
+        -------------------
+        
+        - Fix graceful shutdown handling
+        
+        - Fix `Expect` header handling for not found and not allowed routes #340
+        
+        
+        0.15.2 (04-19-2015)
+        -------------------
+        
+        - Flow control subsystem refactoring
+        
+        - Http server performace optimizations
+        
+        - Allow to match any request method with `*`
+        
+        - Explicitly call drain on transport #316
+        
+        - Make chardet module dependency mandatory #318
+        
+        - Support keep-alive for HTTP 1.0 #325
+        
+        - Do not chunk single file during upload #327
+        
+        - Add ClientSession object for cookie storage and default headers #328
+        
+        - Add `keep_alive_on` argument for http server handler.
+        
+        
+        0.15.1 (03-31-2015)
+        -------------------
+        
+        - Pass Autobahn Testsuit tests
+        
+        - Fixed websocket fragmentation
+        
+        - Fixed websocket close procedure
+        
+        - Fixed parser buffer limits
+        
+        - Added `timeout` parameter to WebSocketResponse ctor
+        
+        - Added `WebSocketResponse.close_code` attribute
+        
+        
+        0.15.0 (03-27-2015)
+        -------------------
+        
+        - Client WebSockets support
+        
+        - New Multipart system #273
+        
+        - Support for "Except" header #287 #267
+        
+        - Set default Content-Type for post requests #184
+        
+        - Fix issue with construction dynamic route with regexps and trailing slash #266
+        
+        - Add repr to web.Request
+        
+        - Add repr to web.Response
+        
+        - Add repr for NotFound and NotAllowed match infos
+        
+        - Add repr for web.Application
+        
+        - Add repr to UrlMappingMatchInfo #217
+        
+        - Gunicorn 19.2.x compatibility
+Platform: UNKNOWN
+Classifier: License :: OSI Approved :: Apache Software License
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.3
+Classifier: Programming Language :: Python :: 3.4
+Classifier: Topic :: Internet :: WWW/HTTP

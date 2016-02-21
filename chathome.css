@@ -1,0 +1,26 @@
+.logo{
+	color: white;
+	font-size: 10em;
+	font-weight: bold;
+	text-align: center;
+	font-family: Helvetica, sans-serif;
+}
+.sub-text{
+	color: white;
+	font-size: 5em;
+	text-align: center;
+	font-family: Helvetica, sans-serif;
+	letter-spacing: 1px;
+	font-weight: 1;
+	
+}
+body{
+	background-image: url("http://publicdomainarchive.com/wp-content/uploads/2016/01/public-domain-images-free-stock-photos-002.jpg");
+	background-position: center bottom;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-attachment: fixed;
+}
+.custom {
+   cursor: url(http://cliparts.co/cliparts/6cr/og8/6crog8zLi.png), auto;
+}

@@ -1,0 +1,35 @@
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="chathome.css" media = "screen"/>
+</head>
+<body>
+	<div class = "over-lay">
+	<p class ="logo">TravelBotty</p>
+	<p class = "sub-text">Never travel alone</p>
+<!-- 	<p>Click the button to access your location.</p> -->
+<!-- 	<button onclick="getLocation()">Locate Me</button>
+ -->
+	<p id="demo"></p>
+	<script src="https://cdn.smooch.io/smooch.min.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        Smooch.init({
+            appToken:'aj4dos1dkv2wa0474w6rp9sns',
+            emailCaptureEnabled: true
+        })
+    </script>
+    <script>
+	// var x = document.getElementById("demo");
+	// function getLocation() {
+	//     if (navigator.geolocation) {
+	//         navigator.geolocation.getCurrentPosition(showPosition);
+	//     } else { 
+	//         x.innerHTML = "Geolocation is not supported by this browser.";
+	//     }
+	// }
+	// function showPosition(position) {
+	//     x.innerHTML = "Latitude: " + position.coords.latitude + 
+	//     "<br>Longitude: " + position.coords.longitude;	
+	// }
+	</script>
+</body>
+</html>
